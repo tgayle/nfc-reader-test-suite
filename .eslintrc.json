@@ -1,0 +1,10 @@
+{
+    "extends": "google",
+    "rules": {
+        "no-unused-vars":"warn"
+    },
+    "parserOptions": {
+        "ecmaVersion": 6,
+        "sourceType": "module"
+    }
+}
