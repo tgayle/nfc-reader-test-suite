@@ -26,10 +26,14 @@ const defaults = {
   ats: '00 00 00 00',
 };
 
-require('./routes')(app, currentIdInfo);
+require('./routes')(app, currentIdInfo, function() {
+  // on card updated
+  socketio.emit('card id', currentIdInfo);
+});
 
 socketio.on('connection', function(socket) {
-  socket.emit('message', {msg: `Hello ${socket.id}`});
+  socket.emit('card id', currentIdInfo);
+  console.log('Connection from ' + socket.id);
   socket.on('message', function(data) {
     console.log(data);
     socket.emit('message', {msg: 'another hello'});

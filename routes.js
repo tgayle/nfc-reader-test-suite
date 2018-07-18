@@ -1,6 +1,6 @@
 const cardTools = require('./card-tools');
 
-module.exports = function(app, mockCard) {
+module.exports = function(app, mockCard, onCardUpdated) {
   app.get('/', function(req, res) {
     res.render('index', mockCard);
   });
@@ -19,6 +19,10 @@ module.exports = function(app, mockCard) {
     let {uid, atqa, sak, ats} = req.body;
     if (cardTools.idIsValid(uid, 8)) {
       mockCard.id = uid;
+      mockCard.atqa = atqa;
+      mockCard.sak = sak;
+      mockCard.ats = ats;
+      onCardUpdated();
       res.json(mockCard);
     } else {
       res.send(401, `Invalid UID: ${uid}`);
