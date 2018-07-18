@@ -1,10 +1,11 @@
 {
     "extends": "google",
     "rules": {
-        "no-unused-vars":"warn"
+        "no-unused-vars":"warn",
+        "linebreak-style": ["error", "windows"]
     },
     "parserOptions": {
         "ecmaVersion": 6,
-        "sourceType": "module"
+        "sourceType": "script"
     }
 }

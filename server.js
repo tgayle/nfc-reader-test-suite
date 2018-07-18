@@ -1,10 +1,12 @@
-const cardTools = require('./card-tools');
 const express = require('express');
 const bodyParser = require('body-parser');
 const app = express();
+const server = require('http').createServer(app);
+server.listen(3000);
+
+const socketio = require('socket.io')(server);
 
 app.set('view engine', 'ejs');
-
 app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({
@@ -24,39 +26,12 @@ const defaults = {
   ats: '00 00 00 00',
 };
 
-app.get('/', function(req, res) {
-  res.render('index', getCurrentCardInfo());
-});
+require('./routes')(app, currentIdInfo);
 
-app.get('/id', function(req, res) {
-  res.json(getCurrentCardInfo());
+socketio.on('connection', function(socket) {
+  socket.emit('message', {msg: `Hello ${socket.id}`});
+  socket.on('message', function(data) {
+    console.log(data);
+    socket.emit('message', {msg: 'another hello'});
+  });
 });
-
-app.post('/id', function(req, res) {
-  currentIdInfo.id = '';
-  res.json(getCurrentCardInfo());
-});
-
-app.post('/id/dev', function(req, res) {
-  console.log(req.body);
-  let {uid, atqa, sak, ats} = req.body;
-  if (cardTools.idIsValid(uid, 8)) {
-    currentIdInfo.id = uid;
-    res.json(getCurrentCardInfo());
-  } else {
-    res.send(401, `Invalid UID: ${uid}`);
-  }
-});
-
-app.post('/id/:new_id', function(req, res) {
-  currentIdInfo.id = req.params.new_id;
-  res.json(getCurrentCardInfo());
-});
-
-app.listen(3000, function() {
-  console.log('listening on port 3000');
-});
-
-let getCurrentCardInfo = () => {
-  return currentIdInfo;
-};
